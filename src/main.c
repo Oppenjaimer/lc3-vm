@@ -1,16 +1,25 @@
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 /* -------------------------------------------------------------------------- */
-/*                                 DEFINITIONS                                */
+/*                                   MEMORY                                   */
 /* -------------------------------------------------------------------------- */
-
-/* --------------------------------- Memory --------------------------------- */
 
 #define MEMORY_MAX (1 << 16)
 uint16_t mem[MEMORY_MAX];
 
-/* -------------------------------- Registers ------------------------------- */
+uint16_t mem_read(uint16_t reg) {
+    (void)reg;
+    return 0;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                  REGISTERS                                 */
+/* -------------------------------------------------------------------------- */
+
+#define PC_START 0x3000 // Default PC starting position
 
 typedef enum {
     R_R0, R_R1, R_R2, R_R3, R_R4, R_R5, R_R6, R_R7, // General purpose
@@ -27,7 +36,9 @@ typedef enum {
 
 uint16_t reg[R_COUNT];
 
-/* ------------------------------ Instructions ------------------------------ */
+/* -------------------------------------------------------------------------- */
+/*                                INSTRUCTIONS                                */
+/* -------------------------------------------------------------------------- */
 
 typedef enum {
     OP_BR,  // Branch
@@ -49,11 +60,93 @@ typedef enum {
 } Opcode;
 
 /* -------------------------------------------------------------------------- */
-/*                                  FUNCTIONS                                 */
+/*                                    UTILS                                   */
 /* -------------------------------------------------------------------------- */
 
-int main() {
-    printf("Hello, World!\n");
+bool read_image(const char *path) {
+    (void)path;
+    return false;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                    MAIN                                    */
+/* -------------------------------------------------------------------------- */
+
+int main(int argc, const char **argv) {
+    // Check number of args
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s IMAGE_FILE [IMAGE_FILE]...\n", argv[0]);
+        exit(2);
+    }
+
+    // Read all image files
+    for (int i = 1; i < argc; i++) {
+        if (!read_image(argv[i])) {
+            fprintf(stderr, "Failed to read image file '%s'\n", argv[i]);
+            exit(1);
+        }
+    }
+
+    // Set registers on startup
+    reg[R_COND] = FL_ZRO;
+    reg[R_PC] = PC_START;
+
+    // Execution loop
+    int running = true;
+    while (running) {
+        // Fetch instruction
+        uint16_t instr = mem_read(reg[R_PC]++);
+        uint16_t opcode = instr >> 12;
+
+        switch (opcode) {
+            case OP_BR:
+                break;
+            
+            case OP_ADD:
+                break;
+
+            case OP_LD:
+                break;
+
+            case OP_ST:
+                break;
+
+            case OP_JSR:
+                break;
+
+            case OP_AND:
+                break;
+
+            case OP_LDR:
+                break;
+
+            case OP_STR:
+                break;
+
+            case OP_NOT:
+                break;
+
+            case OP_LDI:
+                break;
+
+            case OP_STI:
+                break;
+
+            case OP_JMP:
+                break;
+
+            case OP_LEA:
+                break;
+
+            case OP_TRAP:
+                break;
+
+            case OP_RES:
+            case OP_RTI:
+            default:
+                break;
+        }
+    }
 
     return 0;
 }
