@@ -25,18 +25,18 @@ void mem_write(uint16_t addr, uint16_t val) {
 
 #define PC_START 0x3000 // Default PC starting position
 
-typedef enum {
+enum {
     R_R0, R_R1, R_R2, R_R3, R_R4, R_R5, R_R6, R_R7, // General purpose
     R_PC,   // Program counter
     R_COND, // Condition flags
     R_COUNT // Number of registers
-} Register;
+};
 
-typedef enum {
+enum {
     FL_POS = 1 << 0, // (P)ositive
     FL_ZRO = 1 << 1, // (Z)ero
     FL_NEG = 1 << 2  // (N)egative
-} ConditionFlag;
+};
 
 uint16_t reg[R_COUNT];
 
@@ -50,7 +50,16 @@ void update_flags(uint16_t r) {
 /*                                INSTRUCTIONS                                */
 /* -------------------------------------------------------------------------- */
 
-typedef enum {
+enum {
+    TRAP_GETC   = 0x20, // Read char from keyboard
+    TRAP_OUT    = 0x21, // Write char to console
+    TRAP_PUTS   = 0x22, // Write null-terminated string to console
+    TRAP_IN     = 0x23, // Read and echo one char from keyboard
+    TRAP_PUTSP  = 0x24, // Write null-terminated string of byte pairs to console
+    TRAP_HALT   = 0x25  // Halt program execution
+};
+
+enum {
     OP_BR,  // Branch
     OP_ADD, // Add
     OP_LD,  // Load
@@ -67,7 +76,7 @@ typedef enum {
     OP_RES, // Reserved (unused)
     OP_LEA, // Load effective address
     OP_TRAP // Execute trap
-} Opcode;
+};
 
 /* -------------------------------------------------------------------------- */
 /*                                    UTILS                                   */
