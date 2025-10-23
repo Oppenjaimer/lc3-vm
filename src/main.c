@@ -82,9 +82,35 @@ enum {
 /*                                    UTILS                                   */
 /* -------------------------------------------------------------------------- */
 
+uint16_t swap_endianness(uint16_t x) {
+    return (x << 8) | (x >> 8);
+}
+
+void read_image_file(FILE *file) {
+    // Origin sets memory starting point
+    uint16_t origin;
+    fread(&origin, sizeof(origin), 1, file);
+    origin = swap_endianness(origin);
+
+    uint16_t max_size = MEMORY_MAX - origin;
+    uint16_t *dest = mem + origin;
+    size_t read = fread(dest, sizeof(uint16_t), max_size, file);
+
+    // Swap to little-endian
+    while (read-- > 0) {
+        *dest = swap_endianness(*dest);
+        dest++;
+    }
+}
+
 bool read_image(const char *path) {
-    (void)path;
-    return false;
+    FILE *file = fopen(path, "rb");
+    if (!file) return false;
+
+    read_image_file(file);
+    fclose(file);
+    
+    return true;
 }
 
 uint16_t sign_extend(uint16_t x, int bit_count) {
