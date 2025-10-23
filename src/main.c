@@ -250,6 +250,64 @@ int main(int argc, const char **argv) {
                 break;
 
             case OP_TRAP:
+                reg[R_R7] = reg[R_PC];
+                
+                switch (instr & 0xFF) {
+                    case TRAP_GETC:
+                        reg[R_R0] = (uint16_t)getchar();
+                        update_flags(R_R0);
+                        break;
+                    
+                    case TRAP_OUT:
+                        putchar((char)reg[R_R0]);
+                        fflush(stdout);
+                        break;
+
+                    case TRAP_PUTS:
+                        uint16_t *c = mem + reg[R_R0];
+                        while (*c) {
+                            putchar((char)*c);
+                            c++;
+                        }
+
+                        fflush(stdout);
+                        break;
+                    
+                    case TRAP_IN:
+                        printf("IN: ");
+                        char c = getchar();
+                        putchar(c);
+                        fflush(stdout);
+
+                        reg[R_R0] = (uint16_t)c;
+                        update_flags(R_R0);
+                        break;
+
+                    case TRAP_PUTSP:
+                        uint16_t *c = mem + reg[R_R0];
+                        while (*c) {
+                            char c1 = (*c) & 0xFF;
+                            putchar(c1);
+
+                            char c2 = (*c) >> 8;
+                            if (c2) putchar(c2);
+
+                            c++;
+                        }
+
+                        fflush(stdout);
+                        break;
+
+                    case TRAP_HALT:
+                        printf("HALT\n");
+                        fflush(stdout);
+                        running = 0;
+                        break;
+
+                    default:
+                        break;
+                }
+
                 break;
 
             case OP_RES:
