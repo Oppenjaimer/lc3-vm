@@ -305,6 +305,7 @@ int main(int argc, const char **argv) {
                         break;
 
                     default:
+                        abort();
                         break;
                 }
 
@@ -313,6 +314,7 @@ int main(int argc, const char **argv) {
             case OP_RES:
             case OP_RTI:
             default:
+                abort();
                 break;
         }
     }
