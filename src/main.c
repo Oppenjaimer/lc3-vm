@@ -51,7 +51,7 @@ typedef enum {
     OP_ADD, // Add
     OP_LD,  // Load
     OP_ST,  // Store
-    OP_JSR, // Jump register
+    OP_JSR, // Jump to subroutine
     OP_AND, // Bitwise AND
     OP_LDR, // Load register
     OP_STR, // Store register
@@ -145,6 +145,17 @@ int main(int argc, const char **argv) {
                 break;
 
             case OP_JSR:
+                uint16_t rel_flag = (instr >> 11) & 0x1;
+                reg[R_R7] = reg[R_PC];
+
+                if (rel_flag) {
+                    uint16_t pc_offset = sign_extend(instr & 0x7FF, 11);
+                    reg[R_PC] += pc_offset;
+                } else {
+                    uint16_t base_r = (instr >> 6) & 0x7;
+                    reg[R_PC] = reg[base_r];
+                }
+
                 break;
 
             case OP_AND:
