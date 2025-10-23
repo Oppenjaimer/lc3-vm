@@ -184,6 +184,8 @@ int main(int argc, const char **argv) {
                 break;
 
             case OP_JMP:
+                uint16_t base_r = (instr >> 6) & 0x7;
+                reg[R_PC] = reg[base_r];
                 break;
 
             case OP_LEA:
