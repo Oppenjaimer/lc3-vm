@@ -180,6 +180,12 @@ int main(int argc, const char **argv) {
                 break;
 
             case OP_LDR:
+                uint16_t dr = (instr >> 9) & 0x7;
+                uint16_t base_r = (instr >> 6) & 0x7;
+                uint16_t offset = sign_extend(instr & 0x3F, 6);
+
+                reg[dr] = mem_read(reg[base_r] + offset);
+                update_flags(dr);
                 break;
 
             case OP_STR:
