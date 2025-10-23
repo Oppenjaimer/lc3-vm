@@ -10,9 +10,13 @@
 #define MEMORY_MAX (1 << 16)
 uint16_t mem[MEMORY_MAX];
 
-uint16_t mem_read(uint16_t reg) {
-    (void)reg;
+uint16_t mem_read(uint16_t r) {
+    (void)r;
     return 0;
+}
+
+void mem_write(uint16_t addr, uint16_t val) {
+    (void)addr; (void)val;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -147,6 +151,10 @@ int main(int argc, const char **argv) {
                 break;
 
             case OP_ST:
+                uint16_t sr = (instr >> 9) & 0x7;
+                uint16_t pc_offset = sign_extend(instr & 0x1FF, 9);
+
+                mem_write(reg[R_PC] + pc_offset, reg[sr]);
                 break;
 
             case OP_JSR:
