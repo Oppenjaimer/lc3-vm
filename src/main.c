@@ -192,6 +192,11 @@ int main(int argc, const char **argv) {
                 break;
 
             case OP_NOT:
+                uint16_t dr = (instr >> 9) & 0x7;
+                uint16_t sr = (instr >> 6) & 0x7;
+
+                reg[dr] = ~reg[sr];
+                update_flags(dr);
                 break;
 
             case OP_LDI:
