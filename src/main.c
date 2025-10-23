@@ -10,13 +10,21 @@
 #define MEMORY_MAX (1 << 16)
 uint16_t mem[MEMORY_MAX];
 
-uint16_t mem_read(uint16_t r) {
-    (void)r;
-    return 0;
+uint16_t mem_read(uint16_t addr) {
+    if (addr == MR_KBSR) {
+        if (check_key()) {
+            mem[MR_KBSR] = (1 << 15);
+            mem[MR_KBDR] = getchar();
+        } else {
+            mem[MR_KBSR] = 0;
+        }
+    }
+
+    return mem[addr];
 }
 
 void mem_write(uint16_t addr, uint16_t val) {
-    (void)addr; (void)val;
+    mem[addr] = val;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -36,6 +44,11 @@ enum {
     FL_POS = 1 << 0, // (P)ositive
     FL_ZRO = 1 << 1, // (Z)ero
     FL_NEG = 1 << 2  // (N)egative
+};
+
+enum {
+    MR_KBSR = 0xFE00, // Keyboard status
+    MR_KBDR = 0xFE02  // Keyboard data
 };
 
 uint16_t reg[R_COUNT];
@@ -109,7 +122,7 @@ bool read_image(const char *path) {
 
     read_image_file(file);
     fclose(file);
-    
+
     return true;
 }
 
