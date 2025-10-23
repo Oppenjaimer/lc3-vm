@@ -211,6 +211,11 @@ int main(int argc, const char **argv) {
                 break;
 
             case OP_LEA:
+                uint16_t dr = (instr >> 9) & 0x7;
+                uint16_t pc_offset = sign_extend(instr & 0x1FF, 9);
+
+                reg[dr] = reg[R_PC] + pc_offset;
+                update_flags(dr);
                 break;
 
             case OP_TRAP:
