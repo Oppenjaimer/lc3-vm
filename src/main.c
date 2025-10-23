@@ -216,6 +216,10 @@ int main(int argc, const char **argv) {
                 break;
 
             case OP_STI:
+                uint16_t sr = (instr >> 9) & 0x7;
+                uint16_t pc_offset = sign_extend(instr & 0x1FF, 9);
+
+                mem_write(mem_read(reg[R_PC] + pc_offset), reg[sr]);
                 break;
 
             case OP_JMP:
